@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>T-Shirt 3D Model Viewer</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #instructions { 
+      position: absolute; 
+      top: 10px; 
+      width: 100%; 
+      text-align: center; 
+      color: white; 
+      font-family: Arial, sans-serif;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div id="instructions">Click and drag to rotate the model</div>
+  
+  <a-scene background="color: #ECECEC">
+    <!-- Import the GLB model from the GitHub repo -->
+    <a-assets>
+      <a-asset-item id="tshirtModel" src="assets/tshirt.glb"></a-asset-item>
+    </a-assets>
+    
+    <!-- Display the 3D model -->
+    <a-entity 
+      id = tshirt
+      gltf-model="#tshirtModel" 
+      position="0 1.5 2" 
+      rotation="0 0 0" 
+      scale="1 1 1" >
+    </a-entity>
+
+    <!-- Camera and controls for interaction -->
+    <a-camera position="0 1.6 3"></a-camera>
+    <a-sky color="#ECECEC"></a-sky>
+
+    <!-- User controls for rotating and zooming -->
+    <a-entity
+      id="rig"
+      rotation="0 0 0"
+      wasd-controls
+      look-controls="pointerLockEnabled: true"></a-entity>
+  </a-scene>
+
+  <script>
+    // JavaScript-based smooth rotation
+    const tshirtModel = document.getElementById('tshirt');
+    let rotationAngle = 180;
+
+    function rotateModel() {
+      rotationAngle += 0.1; // Adjust speed here
+      tshirtModel.setAttribute('rotation', `0 ${rotationAngle} 0`);
+      requestAnimationFrame(rotateModel);
+    }
+
+    rotateModel(); // Start the rotation loop
+  </script>
+
+</body>
+</html>
