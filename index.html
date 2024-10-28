@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T-Shirt 3D Model Viewer</title>
+  <title>Interactive 3D Model Viewer with Rotation</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <style>
     body { margin: 0; overflow: hidden; }
@@ -18,48 +18,65 @@
   </style>
 </head>
 <body>
-  <div id="instructions">Click and drag to rotate the model</div>
+  <div id="instructions">Press Enter to switch models, scroll to zoom</div>
   
   <a-scene background="color: #ECECEC">
-    <!-- Import the GLB model from the GitHub repo -->
-    <a-assets>
-      <a-asset-item id="tshirtModel" src="assets/tshirt.glb"></a-asset-item>
-    </a-assets>
+    <a-assets id="modelAssets"></a-assets>
     
-    <!-- Display the 3D model -->
-    <a-entity 
-      id = tshirt
-      gltf-model="#tshirtModel" 
-      position="0 1.5 2" 
+    <a-entity id="modelViewer"
+      position="0 1.5 0" 
       rotation="0 0 0" 
-      scale="1 1 1" >
+      scale="1 1 1">
     </a-entity>
 
-    <!-- Camera and controls for interaction -->
-    <a-camera position="0 1.6 3"></a-camera>
-    <a-sky color="#ECECEC"></a-sky>
+    <a-entity 
+    id="cameraRig"
+    position="0 0 1"               
+    orbit-controls="autoRotate: false; target: 0 1 -2; enableDamping: true; dampingFactor: 0.1; minDistance: 0.5; maxDistance: 3">
+    <a-camera></a-camera>
+  </a-entity>
 
-    <!-- User controls for rotating and zooming -->
-    <a-entity
-      id="rig"
-      rotation="0 0 0"
-      wasd-controls
-      look-controls="pointerLockEnabled: true"></a-entity>
+    <a-sky color="#ECECEC"></a-sky>
   </a-scene>
 
   <script>
-    // JavaScript-based smooth rotation
-    const tshirtModel = document.getElementById('tshirt');
+    // Predefined model URLs in the GitHub Pages assets folder
+    const modelUrls = [
+      "https://inogii.github.io/3D-viewer/assets/tshirt.glb",
+      "https://inogii.github.io/3D-viewer/assets/tshirt2.glb"
+    ];
+    
+    let currentIndex = 0;
     let rotationAngle = 180;
 
+    // Load the current model in the viewer
+    function loadModel() {
+      const modelViewer = document.getElementById('modelViewer');
+      modelViewer.setAttribute('gltf-model', modelUrls[currentIndex]);
+    }
+
+    // Go to the next model
+    function nextModel() {
+      currentIndex = (currentIndex + 1) % modelUrls.length;
+      loadModel();
+    }
+
+    // Smooth rotation function
     function rotateModel() {
       rotationAngle += 0.1; // Adjust speed here
-      tshirtModel.setAttribute('rotation', `0 ${rotationAngle} 0`);
+      const modelViewer = document.getElementById('modelViewer');
+      modelViewer.setAttribute('rotation', `0 ${rotationAngle} 0`);
       requestAnimationFrame(rotateModel);
     }
 
-    rotateModel(); // Start the rotation loop
-  </script>
+    // Key press event listener for switching models with Enter key
+    document.addEventListener('click', (event) => {
+      nextModel()
+    });
 
+    // Start rotation and load the initial model on page load
+    loadModel();
+    rotateModel();
+  </script>
 </body>
 </html>
